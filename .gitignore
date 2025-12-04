@@ -1,0 +1,67 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env.*
+*.env
+!.env.example
+.Python/
+dist/
+develop-eggs/
+build/
+mypy_cache/
+.coverage
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.venv
+
+# Poetry lock files
+poetry.lock
+
+# uv lock files
+uv.lock
+
+# tmp bak files
+*.bak
+*.swp
+
+# tmp files and directories
+tmp/
+
+# tags
+tags
+
+# DB files
+data/
+*.db
+*.sqlite3
+rag_db/
+
+
+# ollama related
+ollama_models/
+
+# IDE files
+.vscode/
+.idea
+
+# logs and runtime
+log/
+*.log
+*.pid
+*.out
+
+
+# Test artifacts
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+
+# System
+.DS_Store
+Thumbs.db

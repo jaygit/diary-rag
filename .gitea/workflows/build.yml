@@ -1,0 +1,23 @@
+name: Build and Deploy Diary RAG
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    runs-on: docker
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build images
+        run: make build
+
+      - name: Deploy stack
+        run: make up

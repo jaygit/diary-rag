@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+
+  diary-repl:
+    build: ./python-repl
+    container_name: diary-repl
+    depends_on:
+      - ollama
+    volumes:
+      - "${HOME}/documents/Daily Notes:/vault:ro"   # mount your Obsidian vault
+      - ./rag_db:/rag_db             # persist ChromaDB
+      - ./ingested_notes.json:/app/ingested_notes.json
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+volumes:
+  ollama-data:
