@@ -50,11 +50,11 @@ check:
 	fi
 
 	# Check Docker volumes (common names used by this project)
-	@echo "Checking for expected Docker volumes: ollama-data, diary-rag_rag_db"
-	@if docker volume ls | grep -E "ollama-data|diary-rag_rag_db" >/dev/null 2>&1; then \
+	@echo "Checking for expected Docker volumes: diary-rag_ollama-data, diary-rag_rag_db"
+	@if docker volume ls | grep -E "diary-rag_ollama-data|diary-rag_rag_db" >/dev/null 2>&1; then \
 		echo "Found one or more expected volumes"; \
 	else \
-		echo "[WARN] Expected volumes not found (ollama-data, diary-rag_rag_db). They will be created when you run 'make up'"; \
+		echo "[WARN] Expected volumes not found (diary-rag_ollama-data, diary-rag_rag_db). They will be created when you run 'make up'"; \
 	fi
 
 	# Check rag_db existence

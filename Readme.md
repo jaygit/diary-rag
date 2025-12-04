@@ -68,6 +68,9 @@ make logs      # View REPL logs
 make ingest    # Run ingestion script to embed notes into ChromaDB
 make metadata  # Run ingestion to update only the metadata in ChromaDB
 make repl      # start the REPL query prompt
+make install   # run install checks and create required files
+make check     # run environment consistency checks
+make healthcheck  # run detailed healthcheck script (healthcheck.py)
 ```
 
 ---
@@ -78,14 +81,14 @@ make repl      # start the REPL query prompt
 
 ```bash
 docker volume ls
-docker volume inspect ollama-data
+docker volume inspect diary-rag_ollama-data
 ```
 
 ### To remove volumes:
 
 ```bash
 docker-compose down -v
-docker volume rm ollama-data
+docker volume rm diary-rag_ollama-data
 docker volume rm diary-rag_rag_db
 ```
 ### ingest metadata file
