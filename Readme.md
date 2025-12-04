@@ -202,11 +202,6 @@ If something doesn't behave as expected, these quick checks usually help.
   - Use `list notes` plus `show note <short-fragment>` for quick filename navigation.
   - Use semantic search for meaning-based queries (e.g., `show note ssh wsl2`) when filenames don't contain the phrase.
 
-- Enable automatic top-hit opening (optional)
-  - If you want the REPL to automatically open the top semantic match when its score is much higher than others, I can add a `--auto-open` toggle and a default score threshold.
-
-- Still stuck?
-  - Share the exact command you ran and any error output, and I can help diagnose the issue step-by-step.
 
 ---
 
