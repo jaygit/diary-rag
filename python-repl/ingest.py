@@ -5,6 +5,9 @@ import chromadb
 from chromadb.config import Settings
 import ollama
 import datetime
+from logging_setup import get_logger
+
+logger = get_logger(__name__)
 
 OLLAMA_HOST = "http://ollama:11434"
 MODEL = "phi3"
@@ -66,6 +69,7 @@ def ingest():
                 with open(path, "r", encoding="utf-8") as fh:
                     text = fh.read()
                 
+                logger.debug("Generating embedding for %s", note_id)
                 emb = embed_text(text)
                 collection.add(
                     documents=[text],
@@ -73,7 +77,7 @@ def ingest():
                     ids=[note_id],
                     embeddings=[emb]
                 )
-                print(f"✅ Added new note: {note_id}")
+                logger.info("Added new note: %s", note_id)
 
             else:
                 # Existing note -> update metadata only
@@ -81,7 +85,7 @@ def ingest():
                     ids=[note_id],
                     metadatas=[{"file": path, "date": note_date, "ingested_at": now}]
                 )
-                print(f"🔄Update metadata for: {note_id}")
+                logger.info("Updated metadata for: %s", note_id)
 
             
             ingested[note_id] = now
@@ -110,7 +114,7 @@ def injest_metadata_only():
                     ids=[note_id],
                     metadatas=[{"file": path, "date": note_date, "ingested_at": now}]
                 )
-                print(f"🔄 Metadata refresh for: {note_id}")
+                logger.info("Metadata refresh for: %s", note_id)
 
                 ingested[note_id] = now
     save_ingested(ingested)

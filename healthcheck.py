@@ -26,6 +26,9 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Dict, List, Any
+from logging_setup import get_logger
+
+logger = get_logger(__name__)
 
 
 def run_cmd(cmd: List[str], timeout: int = 10) -> Dict[str, Any]:
@@ -140,11 +143,15 @@ def main() -> int:
     else:
         for c in checks:
             status = "OK" if c["ok"] else ("WARN" if c["severity"] == "warn" else "ERROR")
-            print(f"[{status}] {c['id']}: {c['msg']}")
+            if status == "OK":
+                logger.info("%s: %s", c['id'], c['msg'])
+            elif status == "WARN":
+                logger.warning("%s: %s", c['id'], c['msg'])
+            else:
+                logger.error("%s: %s", c['id'], c['msg'])
         # Additional info snippets
         if ollama_list_out:
-            print("\n--- Ollama list output (truncated) ---")
-            print(ollama_list_out[:2000])
+            logger.info("Ollama list output (truncated):\n%s", ollama_list_out[:2000])
 
     # exit non-zero if any critical errors
     if errors:

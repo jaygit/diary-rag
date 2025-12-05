@@ -4,6 +4,9 @@ import datetime
 import os
 import re
 from chromadb.config import Settings
+from logging_setup import get_logger
+
+logger = get_logger(__name__)
 
 OLLAMA_HOST = "http://ollama:11434"
 MODEL = "phi3"
@@ -91,16 +94,19 @@ def format_context_from_pairs(metadatas, documents, max_docs=5, max_chars=1000):
     return "\n".join(parts)
 
 def repl():
+    logger.info("Starting Diary LLM REPL")
     print("📔 Diary LLM REPL (Ollama PH3 + ChromaDB)")
     print("Type 'quit' to exit.")
     while True:
         query = input("> ").strip()
+        logger.debug("User query: %s", query)
         if query.lower() in ["quit", "exit"]:
             break
 
         # --- Command Mode ---
         if query == "list notes":
             results = collection.get()
+            logger.info("Listing indexed notes (%d)", len(results.get('metadatas', [])))
             print("Indexed Notes:")
             for meta in results['metadatas']:
                 print(meta["file"])
@@ -109,8 +115,10 @@ def repl():
         if query.startswith("show note "):
             note_id = query[len("show note "):].strip()
             # Try exact id first
+            logger.debug("Attempting exact id lookup for: %s", note_id)
             results = collection.get(ids=[note_id])
             if results and results.get('documents') and any(results.get('documents')):
+                logger.info("Exact match found for %s", note_id)
                 print(f"Content of {note_id}:\n")
                 doc = results['documents'][0]
                 if isinstance(doc, list):
@@ -120,6 +128,7 @@ def repl():
                 continue
 
             # No exact match: first try substring search on filenames in metadata
+            logger.debug("No exact match, doing substring search for: %s", note_id)
             all_results = collection.get()
             metadatas = all_results.get('metadatas', [])
             documents = all_results.get('documents', [])
@@ -142,6 +151,7 @@ def repl():
                         print(doc)
                     continue
 
+                logger.info("Multiple substring matches for '%s': %d", note_id, len(matches))
                 print(f"Multiple notes match '{note_id}': (compact list)")
                 for i, (meta, doc) in enumerate(matches, start=1):
                     fname = meta.get('file', '<unknown>')
@@ -152,6 +162,7 @@ def repl():
                     print(display)
 
                 choice = input("Enter number to show, 'p<number>' to preview, 's' to run semantic search, or 'c' to cancel: ").strip()
+                logger.debug("User chose substring match action: %s", choice)
                 if choice.lower() == 'c' or not choice:
                     continue
                 if choice.lower() == 's':
@@ -192,6 +203,7 @@ def repl():
                         print("Invalid input — falling back to semantic search.")
 
             # Semantic search fallback / option: use embeddings to find notes by meaning
+            logger.debug("Running semantic fallback search for: %s", note_id)
             try:
                 q_emb = embed_text(note_id)
                 sem_results = collection.query(query_embeddings=[q_emb], n_results=6)
